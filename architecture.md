@@ -92,6 +92,3 @@ sequenceDiagram
     B->>M: Decrease Shelter Demand by Quantity
 ```
 
-## How to use this:
-1. **GitHub README:** You can copy/paste this exact file into your project's `README.md`. GitHub natively supports Mermaid diagrams and will draw them beautifully.
-2. **Presentations:** If you need to put this in a PowerPoint/Canva slide, you can copy the code blocks above and paste them into a free visualizer like [Mermaid Live Editor](https://mermaid.live/) to download them as PNG images!
