@@ -77,3 +77,20 @@ RescueRoute is a zero-friction, two-sided web platform that automates surplus fo
 │       └── page.jsx          # Main dynamic viewport container
 ├── package.json
 └── README.md
+
+
+⚡ Quickstart & Local Setup
+1. Clone the repository
+Bash
+git clone [https://github.com/your-username/rescueroute.git](https://github.com/your-username/rescueroute.git)
+cd rescueroute
+2. Install dependencies
+Bash
+npm install
+# or
+yarn install
+3. Run the development server
+Bash
+npm run dev
+# or
+yarn dev
