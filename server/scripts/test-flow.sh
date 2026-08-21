@@ -3,23 +3,26 @@
 # Configuration
 API_URL="http://localhost:5000/api"
 
-echo "=== RescueRoute End-to-End Test Sequence ==="
+echo "=== RescueRoute End-to-End Test Sequence (V2 Kolkata) ==="
 
-# 1. Seed Database (Run this before starting the server)
-# Ensure you have run: node server/scripts/seed.js
-
-echo "1. Creating a new Donation..."
+echo "1. Creating a new Donation from Sector V, Kolkata..."
 DONATION_RESPONSE=$(curl -s -X POST $API_URL/donations \
   -H "Content-Type: application/json" \
   -d '{
-    "donorName": "Grand Banquet Hall",
+    "donorName": "Grand Celebration Banquet",
+    "donorPhone": "+91 98765 43210",
     "foodCategory": "Cooked Meals",
-    "quantityServings": 50,
-    "dietaryType": "Any",
-    "address": "400 Grand Ave, Cityville",
+    "exactFoodItems": ["Paneer Butter Masala", "Jeera Rice", "Dal Makhani", "Gulab Jamun"],
+    "quantityServings": 180,
+    "containerDetails": {
+      "size": "Extra Large",
+      "quantity": 2
+    },
+    "dietaryType": ["Veg", "Jain"],
+    "address": "Sector V, Salt Lake, Kolkata",
     "location": {
       "type": "Point",
-      "coordinates": [-73.960000, 40.760000]
+      "coordinates": [88.4330, 22.5740]
     },
     "shelfLifeHours": 3
   }')
@@ -27,9 +30,7 @@ DONATION_RESPONSE=$(curl -s -X POST $API_URL/donations \
 echo "$DONATION_RESPONSE"
 echo ""
 
-# Extract Donation ID and Volunteer ID for subsequent calls
-# Assuming jq is installed or we use grep/sed. For simplicity, we just extract it via simple bash if possible, but the user can copy-paste.
-# We will assume jq is available to make it automated, or just output instructions.
+# Extract Donation ID and Volunteer ID
 DONATION_ID=$(echo $DONATION_RESPONSE | grep -o '"_id":"[^"]*' | head -1 | grep -o '[^"]*$')
 
 if [ -z "$DONATION_ID" ]; then
@@ -54,10 +55,11 @@ fi
 echo "Using Volunteer ID: $VOLUNTEER_ID"
 
 echo "3. Volunteer claims the donation..."
-CLAIM_RESPONSE=$(curl -s -X POST $API_URL/volunteers/donations/$DONATION_ID/claim \
+CLAIM_RESPONSE=$(curl -s -X POST $API_URL/volunteers/claim \
   -H "Content-Type: application/json" \
   -d "{
-    \"volunteerId\": \"$VOLUNTEER_ID\"
+    \"volunteerId\": \"$VOLUNTEER_ID\",
+    \"donationId\": \"$DONATION_ID\"
   }")
 
 echo "$CLAIM_RESPONSE"
@@ -65,7 +67,12 @@ echo ""
 
 
 echo "4. Volunteer delivers the donation..."
-DELIVER_RESPONSE=$(curl -s -X POST $API_URL/volunteers/donations/$DONATION_ID/deliver)
+DELIVER_RESPONSE=$(curl -s -X POST $API_URL/volunteers/deliver \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"volunteerId\": \"$VOLUNTEER_ID\",
+    \"donationId\": \"$DONATION_ID\"
+  }")
 
 echo "$DELIVER_RESPONSE"
 echo ""

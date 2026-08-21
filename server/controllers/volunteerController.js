@@ -23,12 +23,11 @@ const createVolunteer = async (req, res) => {
   }
 };
 
-// POST /api/volunteers/donations/:id/claim
+// POST /api/volunteers/claim
 // Volunteer claims a matched donation
 const claimDonation = async (req, res) => {
   try {
-    const donationId = req.params.id;
-    const { volunteerId } = req.body;
+    const { volunteerId, donationId } = req.body;
 
     const volunteer = await Volunteer.findById(volunteerId);
     if (!volunteer) {
@@ -55,6 +54,7 @@ const claimDonation = async (req, res) => {
 
     // Update Volunteer
     volunteer.status = 'BUSY';
+    volunteer.activeDonation = donation._id;
     await volunteer.save();
 
     req.io.emit('donation:claimed', { donation, volunteer });
@@ -65,11 +65,11 @@ const claimDonation = async (req, res) => {
   }
 };
 
-// POST /api/volunteers/donations/:id/deliver
+// POST /api/volunteers/deliver
 // Volunteer delivers the donation
 const deliverDonation = async (req, res) => {
   try {
-    const donationId = req.params.id;
+    const { volunteerId, donationId } = req.body;
     
     const donation = await Donation.findById(donationId);
     if (!donation) {
@@ -94,9 +94,10 @@ const deliverDonation = async (req, res) => {
     await donation.save();
 
     // Update Volunteer
-    const volunteer = await Volunteer.findById(donation.assignedVolunteer);
+    const volunteer = await Volunteer.findById(volunteerId || donation.assignedVolunteer);
     if (volunteer) {
       volunteer.status = 'IDLE';
+      volunteer.activeDonation = null;
       await volunteer.save();
     }
 

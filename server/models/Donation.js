@@ -2,22 +2,28 @@ const mongoose = require('mongoose');
 
 const donationSchema = new mongoose.Schema({
   donorName: { type: String, required: true },
+  donorPhone: { type: String, required: true },
   foodCategory: { 
     type: String, 
     enum: ['Cooked Meals', 'Bakery', 'Packaged', 'Raw Produce'],
     required: true 
   },
+  exactFoodItems: [{ type: String }],
   quantityServings: { type: Number, required: true },
-  dietaryType: { 
-    type: String, 
-    enum: ['Veg', 'Non-Veg', 'Any'],
-    required: true 
+  containerDetails: {
+    size: { type: String, enum: ['Extra Large', 'Large', 'Medium', 'Small'] },
+    quantity: { type: Number }
   },
+  dietaryType: [{ 
+    type: String, 
+    enum: ['Veg', 'Non-Veg', 'Vegan', 'Halal', 'Jain', 'Any'],
+  }],
   address: { type: String, required: true },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: { type: [Number], required: true } // [longitude, latitude]
   },
+  shelfLifeHours: { type: Number },
   preparedAt: { type: Date, default: Date.now },
   expiresAt: { type: Date, required: true },
   status: { 

@@ -17,61 +17,62 @@ const seedData = async () => {
 
     console.log('Database cleared!');
 
-    // Note: Coordinates are [longitude, latitude]
-    
-    // Create Shelters
-    const shelters = await Shelter.insertMany([
+    // Create Shelters (Kolkata Coordinates)
+    await Shelter.insertMany([
       {
-        name: 'Downtown Community Kitchen',
-        contactPhone: '555-0101',
+        name: 'Missionaries of Charity',
+        contactPerson: 'Sister Mary',
+        contactPhone: '033-2249-7115',
         maxCapacityServings: 500,
         currentDemandServings: 150,
         acceptedDietary: ['Any', 'Veg', 'Non-Veg'],
-        address: '100 Main St, Cityville',
-        location: { type: 'Point', coordinates: [-73.935242, 40.730610] }, // NY approx
+        address: '54A, Acharya Jagadish Chandra Bose Rd, Kolkata',
+        location: { type: 'Point', coordinates: [88.3752, 22.5414] },
         operatingHours: { open: '06:00', close: '20:00' }
       },
       {
-        name: 'Uptown Safe Haven',
-        contactPhone: '555-0202',
+        name: 'Salt Lake Community Hall',
+        contactPerson: 'Rahul Das',
+        contactPhone: '033-2334-0000',
         maxCapacityServings: 200,
         currentDemandServings: 50,
         acceptedDietary: ['Veg'],
-        address: '200 High St, Cityville',
-        location: { type: 'Point', coordinates: [-73.950000, 40.800000] },
+        address: 'Sector III, Salt Lake, Kolkata',
+        location: { type: 'Point', coordinates: [88.4120, 22.5850] },
         operatingHours: { open: '08:00', close: '22:00' }
       },
       {
-        name: 'Riverside Shelter',
-        contactPhone: '555-0303',
+        name: 'Newtown Hope Center',
+        contactPerson: 'Anita Sen',
+        contactPhone: '033-2324-1111',
         maxCapacityServings: 300,
         currentDemandServings: 100,
         acceptedDietary: ['Any'],
-        address: '300 River Rd, Cityville',
-        location: { type: 'Point', coordinates: [-74.000000, 40.750000] },
+        address: 'Action Area I, Newtown, Kolkata',
+        location: { type: 'Point', coordinates: [88.4680, 22.5780] },
         operatingHours: { open: '00:00', close: '23:59' }
       }
     ]);
     console.log('Shelters inserted!');
 
-    // Create Volunteers
-    const volunteers = await Volunteer.insertMany([
+    // Create Volunteers (Kolkata Coordinates)
+    await Volunteer.insertMany([
       {
         name: 'Alice Smith',
-        phone: '555-1001',
+        phone: '9876543210',
+        vehicleType: 'Bike',
         status: 'IDLE',
-        location: { type: 'Point', coordinates: [-73.940000, 40.740000] }
+        location: { type: 'Point', coordinates: [88.4312, 22.5726] } // Sector V
       },
       {
         name: 'Bob Jones',
-        phone: '555-1002',
+        phone: '8765432109',
+        vehicleType: 'Van',
         status: 'IDLE',
-        location: { type: 'Point', coordinates: [-73.990000, 40.720000] }
+        location: { type: 'Point', coordinates: [88.3639, 22.5535] } // Park Street
       }
     ]);
     console.log('Volunteers inserted!');
-
-    // Not seeding donations as they should be created via the API to trigger matching logic
 
     console.log('Data seeding completed successfully!');
     process.exit();

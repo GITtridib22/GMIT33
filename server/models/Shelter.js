@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 
 const shelterSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  contactPerson: { type: String, required: true },
   contactPhone: { type: String, required: true },
   maxCapacityServings: { type: Number, required: true },
   currentDemandServings: { type: Number, required: true },
-  acceptedDietary: [{ type: String }],
+  acceptedDietary: [{ 
+    type: String,
+    enum: ['Veg', 'Non-Veg', 'Vegan', 'Halal', 'Jain', 'Any']
+  }],
   address: { type: String, required: true },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },

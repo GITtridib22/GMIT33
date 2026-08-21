@@ -2,32 +2,43 @@ const Donation = require('../models/Donation');
 const Shelter = require('../models/Shelter');
 const { getDrivingRoute } = require('../services/routingService');
 
-// Default shelf life: 2 hours if not provided
-const DEFAULT_SHELF_LIFE_HOURS = 2;
+// Default shelf life: 3 hours if not provided
+const DEFAULT_SHELF_LIFE_HOURS = 3;
 const MAX_SEARCH_RADIUS_METERS = 8000; // 8km
 
 // POST /api/donations
 // Creates donation, matches optimal shelter based on constraints
 const createDonation = async (req, res) => {
   try {
-    const { donorName, foodCategory, quantityServings, dietaryType, address, location, shelfLifeHours } = req.body;
+    const { 
+      donorName, donorPhone, foodCategory, exactFoodItems, 
+      quantityServings, containerDetails, dietaryType, 
+      address, location, shelfLifeHours 
+    } = req.body;
 
     const hours = shelfLifeHours || DEFAULT_SHELF_LIFE_HOURS;
     const expiresAt = new Date(Date.now() + hours * 3600 * 1000);
 
     const donation = new Donation({
       donorName,
+      donorPhone,
       foodCategory,
+      exactFoodItems,
       quantityServings,
+      containerDetails,
       dietaryType,
       address,
       location,
+      shelfLifeHours,
       expiresAt,
       status: 'AVAILABLE'
     });
 
     // Save initially (in case matching takes time or fails, we have it recorded)
     await donation.save();
+
+    // Ensure dietaryType is an array for matching
+    const dietaryArray = Array.isArray(dietaryType) ? dietaryType : [dietaryType];
 
     // Find eligible shelters
     const eligibleShelters = await Shelter.find({
@@ -38,7 +49,7 @@ const createDonation = async (req, res) => {
         }
       },
       currentDemandServings: { $gt: 0 },
-      acceptedDietary: { $in: [dietaryType, 'Any'] }
+      acceptedDietary: { $in: [...dietaryArray, 'Any'] }
     });
 
     if (eligibleShelters.length === 0) {
