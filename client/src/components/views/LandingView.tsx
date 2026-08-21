@@ -18,7 +18,7 @@ export const LandingView: React.FC = () => {
   // Form States (pre-filled with demo defaults)
   const [donorForm, setDonorForm] = useState({
     name: 'Grand Celebration Banquet',
-    phone: '+91 98765 43210',
+    phone: '+91 98765 432',
     address: '123 Event Hall, Main St',
     location: { lat: currentCity.lat, lng: currentCity.lng },
     dietaryTypes: ['Veg', 'Jain'] as string[],
