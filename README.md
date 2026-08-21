@@ -79,18 +79,21 @@ RescueRoute is a zero-friction, two-sided web platform that automates surplus fo
 └── README.md
 
 
-⚡ Quickstart & Local Setup
-1. Clone the repository
-Bash
+## ⚡ Quickstart & Local Setup
+
+### 1. Clone the Repository
+```bash
 git clone [https://github.com/your-username/rescueroute.git](https://github.com/your-username/rescueroute.git)
 cd rescueroute
-2. Install dependencies
-Bash
+### 2. Install dependencies
 npm install
 # or
 yarn install
-3. Run the development server
-Bash
+# or
+pnpm install
+### 3. Start the development server
 npm run dev
 # or
 yarn dev
+# or
+pnpm dev
