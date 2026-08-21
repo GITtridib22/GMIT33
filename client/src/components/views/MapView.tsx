@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { RoutingMap } from '../RoutingMap';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Clock, MapPin, Truck, AlertOctagon, Navigation, CheckCircle, Car, X, ShieldCheck, Zap } from 'lucide-react';
@@ -12,6 +12,17 @@ export const MapView: React.FC = () => {
   const [routeTelemetry, setRouteTelemetry] = useState<Record<string, { distance: string; duration: string; traffic: string }>>({});
 
   const shelter = currentRole === 'SHELTER' ? shelters[0] : null;
+
+  // Dynamic Map Re-Centering Hook
+  const MapRecenter = ({ center }: { center: [number, number] }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (center && center[0] && center[1]) {
+        map.flyTo(center, 13, { duration: 1.5 });
+      }
+    }, [center, map]);
+    return null;
+  };
 
   // On mount, if Donor, broadcast the initial payload from currentUserProfile
   useEffect(() => {
@@ -53,9 +64,12 @@ export const MapView: React.FC = () => {
 
   const telemetry = activeDonationTarget ? routeTelemetry[activeDonationTarget.id] : null;
 
+  // Fallback to detected profile location instead of hardcoded city
   const mapCenter = activeDonationTarget 
     ? [activeDonationTarget.location.lat, activeDonationTarget.location.lng] 
-    : [currentCity.lat, currentCity.lng];
+    : (currentUserProfile as any)?.location 
+      ? [(currentUserProfile as any).location.lat, (currentUserProfile as any).location.lng]
+      : [currentCity.lat, currentCity.lng];
 
   return (
     <div className="h-[calc(100vh-64px)] flex overflow-hidden bg-slate-50">
@@ -248,6 +262,7 @@ export const MapView: React.FC = () => {
           ) : (
             /* Default fallback map if just waiting / broadcasting */
             <MapContainer center={mapCenter as L.LatLngExpression} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false}>
+              <MapRecenter center={mapCenter as [number, number]} />
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               
               {/* Show donor pin if active target exists */}

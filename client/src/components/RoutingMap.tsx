@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -29,6 +29,16 @@ const createTrafficSegments = (coordinates: [number, number][]) => {
 
 export const RoutingMap: React.FC<RoutingMapProps> = ({ shelterLocation, donorLocation, onRouteComputed }) => {
   const [routeSegments, setRouteSegments] = useState<{ positions: [number, number][], color: string }[]>([]);
+
+  const MapRecenter = ({ center }: { center: [number, number] }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (center && center[0] && center[1]) {
+        map.flyTo(center, 13, { duration: 1.5 });
+      }
+    }, [center, map]);
+    return null;
+  };
 
   useEffect(() => {
     // Fetch from public OSRM API (Keyless)
@@ -69,6 +79,7 @@ export const RoutingMap: React.FC<RoutingMapProps> = ({ shelterLocation, donorLo
       scrollWheelZoom={false}
       doubleClickZoom={false}
     >
+      <MapRecenter center={[ (shelterLocation.lat + donorLocation.lat)/2, (shelterLocation.lng + donorLocation.lng)/2 ]} />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       
       {/* Target/Destination Markers */}
